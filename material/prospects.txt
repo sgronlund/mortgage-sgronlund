@@ -1,0 +1,16 @@
+Customer,Total loan,Interest,Years
+Juha,1000,5,2
+Karvinen,4356,1.27,6
+Claes Månsson,1300.55,8.67,2
+"Clarencé,Andersson",2000,6,4
+
+
+
+
+
+
+
+
+
+
+.
