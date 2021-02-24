@@ -16,6 +16,15 @@ public class Mortgage {
         }
         return total;
     }
+
+    public String safeFormat(String line) {
+        String noCommas = line.replaceAll(",", " ");
+        String test = noCommas.replaceAll("[^a-öA-Ö ]", "");
+        test = String.format(test,"[ \t]+(\r?$)");
+        //String[] separated = test.split(" ");
+        return test;
+    }
+
     /*
         This function assumes a particular format for the input files
     */
@@ -30,14 +39,16 @@ public class Mortgage {
     } 
 
     public String outputProspect(String line, int prospectNum) {
-        String[] parts = line.split(",");
-        
+        String parts = safeFormat(line);
+        //System.out.println(parts);
+        /*
         String separator = "****************************************************************************************************\n";
         String individual = "Prospect " + prospectNum + ": " + parts[0] + " wants to borrow ";
         String loan = parts[1] + "€ for a period of " + parts[3] + " years and pay ";
         String mortgage = calcMortgage(parts) + "€ each month\n";
         String result = separator + "\n" + individual + loan + mortgage + separator;
-        return result;
+        */
+        return parts;
     }
 
 }
