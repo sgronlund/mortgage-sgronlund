@@ -8,13 +8,13 @@ This repository uses Gradle as a build tool, however it is not required to have 
 
 ### Compiling
 
-To compile all source files on a Unix system use:
+To compile all source files on a Unix system use the following command in your terminal:
 
 ```bash
 ./gradlew assemble
 ```
 
-On a Windows machine:
+On a Windows machine use the following in Powershell or Bash:
 
 ```bash
 .\gradlew assemble
@@ -22,13 +22,13 @@ On a Windows machine:
 
 ### Running tests
 
-To run tests on a Unix system use: 
+To run tests on a Unix system use the following command in your terminal:
 
 ```bash
 ./gradlew test
 ```
 
-On a Windows machine: 
+On a Windows machine use the following in Powershell or Bash:
 
 ```bash
 .\gradlew test

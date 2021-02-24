@@ -3,7 +3,7 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -15,5 +15,7 @@ test {
     useJUnitPlatform()
     testLogging {
         events "passed", "failed"
+        outputs.upToDateWhen {false} /* Removes the requirements to clean before all tests */
+        showStandardStreams = true
     }
 }
