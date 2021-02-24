@@ -32,7 +32,9 @@ public class Mortgage {
                 name = name + currentChar;
             } else if(Character.isDigit(currentChar) && line.charAt(prevIndex) == ',') {
                 break;
-            } 
+            } else if(Character.isWhitespace(currentChar)) {
+                name = name + " ";
+            }
         }
         return name;
     }

@@ -21,6 +21,8 @@ On a Windows machine use the following in Powershell or Bash:
 ```
 
 ### Running tests
+The test involves multiples files with similarily generated test data as the file `prospects.txt`
+
 
 To run tests on a Unix system use the following command in your terminal:
 
