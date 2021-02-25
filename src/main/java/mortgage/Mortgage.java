@@ -8,7 +8,7 @@ public class Mortgage {
     /*
      *   This methods does not work for negative exponents, this method was created since it's assumed that Math.power() is not allowed. 
      */
-    public Double power(Double base, Double exponent) {
+    public Double power(Double base, int exponent) {
         double total = 1;
         for (int i = 0; i < exponent; ++i) {
             total = total*base;
@@ -25,17 +25,17 @@ public class Mortgage {
     public String safeFormatName(String line) {
         String name = "";
         int prevIndex = 0; 
+        line = line.replaceAll("[^a-öA-Ö']", " ");
         for (int i = 0; i < line.length(); ++i) {
             char currentChar = line.charAt(i);
             if (i > 1) prevIndex = i-1;
-            if (Character.isLetter(currentChar)) {
-                name = name + currentChar;
-            } else if(Character.isDigit(currentChar) && line.charAt(prevIndex) == ',') {
-                break;
-            } else if(Character.isWhitespace(currentChar)) {
+            if(Character.isWhitespace(currentChar) && Character.isAlphabetic(line.charAt(prevIndex))) {
                 name = name + " ";
+            } else {
+                name = name + currentChar; 
             }
         }
+        name = name.trim();
         return name;
     }
 
@@ -70,9 +70,9 @@ public class Mortgage {
     public Double calcMortgage(String[] stats) {
         Double totalLoan = Double.parseDouble(stats[0]);
         Double interest = Double.parseDouble(stats[1]) / 100; /*Need to divide by 100 otherwise interest is not in percentages*/
-        Double years = Double.parseDouble(stats[2]);
+        int years = Integer.parseInt(stats[2]);
         Double montlyInterest = interest / 12;
-        Double numOfPayments = years * 12;
+        int numOfPayments = years * 12;
         Double mortgage = totalLoan*(((montlyInterest)*power((1 + montlyInterest),(numOfPayments))) / (power((1 + montlyInterest),(numOfPayments))-1));
         return mortgage;
     } 
@@ -98,7 +98,7 @@ public class Mortgage {
     public void outputData(File filename) throws FileNotFoundException {
         Scanner scan = new Scanner(filename);
         int i = 1;
-        scan.nextLine(); //Skip over line which explains formatting of the file (it is assumed to always appear and will appear in other test-files)
+        scan.nextLine(); //Skip over line which explains formatting of the file, i.e. if other files are used to test this program they also are assumed to include a similar line
         while(scan.hasNextLine()) {
             String currentLine = scan.nextLine();
             if (currentLine.length() > 7) { //This assumes that a valid string is eg. a,1,2,3
