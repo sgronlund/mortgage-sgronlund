@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import mortgage.Mortgage;
 import java.io.FileNotFoundException;
 import java.io.File;
@@ -13,7 +16,7 @@ public class TestRunner {
     
     @Test
     public void testMortgageCalc() {
-        for(int i = 0; i < 500; ++i) {
+        for(int i = 0; i < 1000; ++i) {
             Faker fake = new Faker();
             Mortgage mort = new Mortgage();
             String firstName = fake.name().firstName(); 
@@ -30,7 +33,7 @@ public class TestRunner {
 
     @Test
     public void testPowerFunc() {
-        for(int i = 0; i < 500; ++i) {
+        for(int i = 0; i < 1000; ++i) {
             Mortgage mort = new Mortgage();
             Faker fake = new Faker();
             Double base = fake.number().randomDouble(1, 1, 100);
@@ -43,7 +46,7 @@ public class TestRunner {
 
     @Test
     public void testFormatFullName() {
-        for(int i = 0; i < 500; ++i) {
+        for(int i = 0; i < 1000; ++i) {
             Mortgage mort = new Mortgage();
             Faker fake = new Faker();
             String firstName = fake.name().firstName();
@@ -60,15 +63,53 @@ public class TestRunner {
             } catch (AssertionFailedError err) {
                 System.out.println("diff = " + StringUtils.difference(actualName, parsedName));
                 System.out.println("Expected: " + actualName + ", actual: " + parsedName);
+                fail();
             }
+        }
+    }
+    
+    @Test
+    public void testGetStats() {
+        for (int i = 0; i < 500; ++i) {
+            Mortgage mort = new Mortgage();
+            Faker fake = new Faker();
+            String fullName = fake.name().firstName() + " " + fake.name().lastName();
+            Double loanAmount = fake.number().randomDouble(0, 1000, 10000);
+            Double interest = fake.number().randomDouble(3,1,10);
+            int years = fake.number().numberBetween(1, 30);
+            String person = fullName + "," + loanAmount.toString() + "," + interest.toString() + "," + years; 
+            String[] list = {loanAmount.toString(), interest.toString(), Integer.toString(years)};
+            String[] statsList = mort.safeFormatStats(person);
+            assertArrayEquals(list, statsList);
         }
     }
 
     @Test
-    public void testSampleFile() throws FileNotFoundException {
-        File file = new File("material/prospects.txt");
+    public void testMissingNameInput() {
         Mortgage mort = new Mortgage();
-        mort.outputData(file);
+        Faker fake = new Faker();
+        Double loanAmount = fake.number().randomDouble(0, 1000, 10000);
+        Double interest = fake.number().randomDouble(2, 1, 10);
+        int years = fake.number().numberBetween(1, 30);
+        String statsOnly = loanAmount.toString() + "," + interest.toString() + "," + years;
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {
+            mort.outputProspect(statsOnly, 0);
+        });
+        String expected = "Method was called with empty string, not a valid argument";
+        String actual = e.getMessage();
+        assertEquals(expected, actual);
     }
 
+    @Test
+    public void testMissingStatsInput() {
+        Mortgage mort = new Mortgage();
+        Faker fake = new Faker();
+        String name = fake.name().firstName();
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {
+            mort.outputProspect(name, 0);
+        });
+        String expected = "Method was called with empty string, not a valid argument";
+        String actual = e.getMessage();
+        assertEquals(expected, actual);
+    }
 }

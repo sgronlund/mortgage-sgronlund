@@ -5,8 +5,11 @@ import java.io.FileNotFoundException;
 
 
 public class Mortgage {
+
     /*
-     *   This methods does not work for negative exponents, this method was created since it's assumed that Math.power() is not allowed. 
+     *  
+     * 
+     *  
      */
     public Double power(Double base, int exponent) {
         double total = 1;
@@ -29,7 +32,7 @@ public class Mortgage {
         for (int i = 0; i < line.length(); ++i) {
             char currentChar = line.charAt(i);
             if (i > 1) prevIndex = i-1;
-            if(Character.isWhitespace(currentChar) && Character.isAlphabetic(line.charAt(prevIndex))) {
+            if((Character.isWhitespace(currentChar) && Character.isAlphabetic(line.charAt(prevIndex)))) {
                 name = name + " ";
             } else {
                 name = name + currentChar; 
@@ -42,7 +45,7 @@ public class Mortgage {
     /*
      *  This method assumes that a prospect has no digits in its name. Not satisfied with method, 
      *  should be possible to only use Regex to get the correct format
-     * INVARIANT: Should never be used on empty string or strings which do not contain any digits or commas.
+     *  INVARIANT: Should never be used on empty string or strings which do not contain any digits or commas.
      */
     public String[] safeFormatStats(String line) {
         int i = 0;
@@ -65,8 +68,8 @@ public class Mortgage {
     }
 
     /*
-        This method assumes a particular format for the input files
-    */
+     *    This method assumes a particular format for the input files
+     */
     public Double calcMortgage(String[] stats) {
         Double totalLoan = Double.parseDouble(stats[0]);
         Double interest = Double.parseDouble(stats[1]) / 100; /*Need to divide by 100 otherwise interest is not in percentages*/
@@ -78,19 +81,19 @@ public class Mortgage {
     } 
 
     /*
-     *
+     * Formats all the data into the correct format specified in the assignment.
      * 
      */
     public String outputProspect(String line, int prospectNum) throws IllegalArgumentException{
         String name = safeFormatName(line);
         String[] stats = safeFormatStats(line);
-        if (name.length() == 0 || stats.length == 0) {
+        if (name.length() == 0 || stats.length < 3) {
            throw new IllegalArgumentException("Method was called with empty string, not a valid argument");
         }
         String separator = "****************************************************************************************************\n";
         String individual = "Prospect " + prospectNum + ": " + name + " wants to borrow ";
         String loan = stats[0] + "€ for a period of " + stats[2] + " years and pay ";
-        String mortgage = calcMortgage(stats) + "€ each month\n";
+        String mortgage = String.format("%.2f",calcMortgage(stats)) + "€ each month\n";
         String result = separator + "\n" + individual + loan + mortgage + separator;
         return result;
     }
@@ -107,6 +110,13 @@ public class Mortgage {
             }
         }
         scan.close();
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        File prospects = new File("material/prospects.txt");
+        Mortgage mort = new Mortgage();
+        mort.outputData(prospects);
+
     }
 
 }
