@@ -1,4 +1,4 @@
-# mortage-sgronlund
+# mortgage-sgronlund
 
 This repository contains a simple mortgage calculator written in Java.
 
