@@ -21,26 +21,16 @@ public class Mortgage {
     }
 
     /** 
-     * @brief Takes a string and searches for the first and last name of the customer.
+     * @brief Takes a string and outputs the name of a customer.
      * @param line A line within the prospect file.
      * @return The sequence of words which was found within the string.
-     * INVARIANT: Should never be used on empty string or strings which do not contain any digits or commas.
+     * INVARIANT: Should never be used on empty string.
      */
 
     public String safeFormatName(String line) {
-        String name = "";
-        int prevIndex = 0; 
-        line = line.replaceAll("[^a-öA-Ö']", " ");
-        for (int i = 0; i < line.length(); ++i) {
-            char currentChar = line.charAt(i);
-            if (i > 1) prevIndex = i-1;
-            if((Character.isWhitespace(currentChar) && Character.isAlphabetic(line.charAt(prevIndex)))) {
-                name = name + " ";
-            } else {
-                name = name + currentChar; 
-            }
-        }
-        name = name.trim();
+        String name = line.replaceAll("[^a-öA-Ö']+", " "); 
+        // Regex which matches one or more non alphabetic characters, i.e. if the user would have entered "John,,,,,,Johnsson" the replaceAll would return John Johnsson.
+        name = name.trim(); //Removes trailing and leading whitespaces which may remain after using the replaceAll
         return name;
     }
 
@@ -53,22 +43,10 @@ public class Mortgage {
      *  i.e. the loan amount.
      */
     public String[] safeFormatValues(String line) {
-        int i = 0;
-        int totalLength = line.length();
-        int prevIndex = 0;
-        char prevChar = '\0';
-        for(i = 0; i < totalLength; ++i) {
-            prevIndex = i-1;
-            char currentChar = line.charAt(i);
-            if (i > 1) {
-                prevChar = line.charAt(prevIndex);
-                if (prevChar == ',' && Character.isDigit(currentChar)) {
-                    break;
-                }
-            }
-        }
-        String values = line.substring(i,totalLength);
-        String[] valueParts = values.split(",");
+        String values = line.replaceAll("[^0-9.]+", " ");
+        // Regex which matches one ore more non-digit character (and zero for decimal values), works in a similiar way to the one in safeFormatName
+        values = values.trim();
+        String[] valueParts = values.split(" ");
         return valueParts;
     }
 
@@ -123,7 +101,7 @@ public class Mortgage {
         scan.nextLine(); //Skip over line which explains formatting of the file, i.e. if other files are used to test this program they also are assumed to include a similar line
         while(scan.hasNextLine()) {
             String currentLine = scan.nextLine();
-            if (currentLine.length() > 7) { //This assumes that a valid string is eg. a,1,2,3
+            if (currentLine.length() >= 7) { //This assumes that a valid string is eg. a,1,2,3
                 System.out.println(outputProspect(currentLine,i));
                 ++i;
             }

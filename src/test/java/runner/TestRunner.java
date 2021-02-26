@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import mortgage.Mortgage;
-import java.io.FileNotFoundException;
-import java.io.File;
 import com.github.javafaker.*;
 
 public class TestRunner {
