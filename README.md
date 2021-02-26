@@ -21,6 +21,7 @@ On a Windows machine use the following in Powershell or the command prompt:
 ```
 
 ### Running tests
+
 The test involves unit tests for the functions written for this program, mostly testing functionality but also checking that errors are handle in some way.
 
 To run tests on a Unix system use the following command in your terminal:

@@ -6,10 +6,11 @@ import java.io.FileNotFoundException;
 
 public class Mortgage {
 
-    /*
-     *  
-     * 
-     *  
+    /**
+     * @brief Calculates a base to the power of an exponent
+     * @param base The factor which should be multiplied by itself
+     * @param exponent The amoun of times we multipliy the factor by itself
+     * @return The value of the base to the power of the exponent
      */
     public Double power(Double base, int exponent) {
         double total = 1;
@@ -19,9 +20,10 @@ public class Mortgage {
         return total;
     }
 
-    /* Not satisfied with this method, should be possible to only use Regex to get a correct format
-     * This method assumes the name/first field cannot contain a comma with a proceeding digit, 
-     * in this case we assume that we've found the next field
+    /** 
+     * @brief Takes a string and searches for the first and last name of the customer.
+     * @param line A line within the prospect file.
+     * @return The sequence of words which was found within the string.
      * INVARIANT: Should never be used on empty string or strings which do not contain any digits or commas.
      */
 
@@ -42,12 +44,15 @@ public class Mortgage {
         return name;
     }
 
-    /*
-     *  This method assumes that a prospect has no digits in its name. Not satisfied with method, 
-     *  should be possible to only use Regex to get the correct format
-     *  INVARIANT: Should never be used on empty string or strings which do not contain any digits or commas.
+    /**
+     *  @brief Tries to find the loan amount, interest rate and amount of years the customer want to pay back the loan in.
+     *  @param line A line within the prospect file
+     *  @return An array of strings of the values which were in the string
+     *  
+     *  Function is composed such that if we find a digit and a comma it is assumed that we've found the second part of the input,
+     *  i.e. the loan amount.
      */
-    public String[] safeFormatStats(String line) {
+    public String[] safeFormatValues(String line) {
         int i = 0;
         int totalLength = line.length();
         int prevIndex = 0;
@@ -62,42 +67,56 @@ public class Mortgage {
                 }
             }
         }
-        String stats = line.substring(i,totalLength);
-        String[] statParts = stats.split(",");
-        return statParts;
+        String values = line.substring(i,totalLength);
+        String[] valueParts = values.split(",");
+        return valueParts;
     }
 
-    /*
-     *    This method assumes a particular format for the input files
+    /** 
+     * @brief Calculates the montly mortgage payment based on a array of string supplied by safeFormatValues.
+     * @param values the result of calling safeFormatValues on a string in the prospects file.
+     * @return The montly mortgage payment the customer will make.
+     * 
+     * INVARIANT: Function expects the argument to be the output of safeFormatValues.
      */
-    public Double calcMortgage(String[] stats) {
-        Double totalLoan = Double.parseDouble(stats[0]);
-        Double interest = Double.parseDouble(stats[1]) / 100; /*Need to divide by 100 otherwise interest is not in percentages*/
-        int years = Integer.parseInt(stats[2]);
+    public Double calcMortgage(String[] values) {
+        Double totalLoan = Double.parseDouble(values[0]);
+        Double interest = Double.parseDouble(values[1]) / 100; /*Need to divide by 100 otherwise interest is not in percentages*/
+        int years = Integer.parseInt(values[2]);
         Double montlyInterest = interest / 12;
         int numOfPayments = years * 12;
         Double mortgage = totalLoan*(((montlyInterest)*power((1 + montlyInterest),(numOfPayments))) / (power((1 + montlyInterest),(numOfPayments))-1));
         return mortgage;
     } 
 
-    /*
-     * Formats all the data into the correct format specified in the assignment.
+    /**
+     * @brief Takes the values from safeFormatValues, safeFormatName and calcMortgage and formats them into a nicer string.
+     * @param line a line within the prospect file
+     * @param prospectNum the number of the current customer in the file.
+     * @return An exact String is described in the instructions
      * 
      */
     public String outputProspect(String line, int prospectNum) throws IllegalArgumentException{
         String name = safeFormatName(line);
-        String[] stats = safeFormatStats(line);
-        if (name.length() == 0 || stats.length < 3) {
+        String[] values = safeFormatValues(line);
+        if (name.length() == 0 || values.length < 3) {
            throw new IllegalArgumentException("Method was called with empty string, not a valid argument");
         }
         String separator = "****************************************************************************************************\n";
         String individual = "Prospect " + prospectNum + ": " + name + " wants to borrow ";
-        String loan = stats[0] + "€ for a period of " + stats[2] + " years and pay ";
-        String mortgage = String.format("%.2f",calcMortgage(stats)) + "€ each month\n";
+        String loan = values[0] + "€ for a period of " + values[2] + " years and pay ";
+        String mortgage = String.format("%.2f",calcMortgage(values)) + "€ each month\n";
         String result = separator + "\n" + individual + loan + mortgage + separator;
         return result;
     }
 
+    /**
+     * @brief Takes a file, which must be formatted as the prospects file, and outputs the data based on the people in it
+     * @param filename The file we want to output the data of
+     * @throws FileNotFoundException
+     * 
+     * The line that explains the formatting of the prospects file is always assumed to be there.
+     */
     public void outputData(File filename) throws FileNotFoundException {
         Scanner scan = new Scanner(filename);
         int i = 1;
@@ -111,6 +130,7 @@ public class Mortgage {
         }
         scan.close();
     }
+
 
     public static void main(String[] args) throws FileNotFoundException {
         File prospects = new File("material/prospects.txt");

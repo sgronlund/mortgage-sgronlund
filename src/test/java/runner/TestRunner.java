@@ -15,7 +15,7 @@ import com.github.javafaker.*;
 public class TestRunner {
     
     @Test
-    public void testMortgageCalc() {
+    public void testMortgageCalcForPerson() {
         for(int i = 0; i < 1000; ++i) {
             Faker fake = new Faker();
             Mortgage mort = new Mortgage();
@@ -25,9 +25,9 @@ public class TestRunner {
             Double loanAmount = fake.number().randomDouble(0, 1000, 10000);
             Double interest = fake.number().randomDouble(2, 1, 10);
             int years = fake.number().numberBetween(1, 30);
-            Double expected = loanAmount * ((interest / 1200) / (1 - Math.pow(1+(interest/1200), -(years * 12))));
+            Double expected = loanAmount * ((interest / 1200) / (1 - Math.pow(1+(interest/1200), -(years * 12)))); //Use the built in Math power to see if the calculations where correct
             String person = fullName + "," + loanAmount.toString() + "," + interest.toString() + "," + years;
-            assertEquals(expected, mort.calcMortgage(mort.safeFormatStats(person)), 0.000001);
+            assertEquals(expected, mort.calcMortgage(mort.safeFormatValues(person)), 0.000001);
         }
     }
 
@@ -45,7 +45,7 @@ public class TestRunner {
     }
 
     @Test
-    public void testFormatFullName() {
+    public void testFormatWeirdStringFromInputFile() {
         for(int i = 0; i < 1000; ++i) {
             Mortgage mort = new Mortgage();
             Faker fake = new Faker();
@@ -56,8 +56,8 @@ public class TestRunner {
             Double loanAmount = fake.number().randomDouble(0, 1000, 10000);
             Double interest = fake.number().randomDouble(2, 1, 10);
             int years = fake.number().numberBetween(1, 30);
-            String personStats = weirdName + "," + loanAmount.toString() + "," + interest.toString() + "," + years;
-            String parsedName = mort.safeFormatName(personStats);
+            String personvalues = weirdName + "," + loanAmount.toString() + "," + interest.toString() + "," + years;
+            String parsedName = mort.safeFormatName(personvalues);
             try {
                 assertEquals(actualName, parsedName);
             } catch (AssertionFailedError err) {
@@ -69,7 +69,7 @@ public class TestRunner {
     }
     
     @Test
-    public void testGetStats() {
+    public void testGetvaluesForDifferentNames() {
         for (int i = 0; i < 500; ++i) {
             Mortgage mort = new Mortgage();
             Faker fake = new Faker();
@@ -79,21 +79,21 @@ public class TestRunner {
             int years = fake.number().numberBetween(1, 30);
             String person = fullName + "," + loanAmount.toString() + "," + interest.toString() + "," + years; 
             String[] list = {loanAmount.toString(), interest.toString(), Integer.toString(years)};
-            String[] statsList = mort.safeFormatStats(person);
-            assertArrayEquals(list, statsList);
+            String[] valuesList = mort.safeFormatValues(person);
+            assertArrayEquals(list, valuesList);
         }
     }
 
     @Test
-    public void testMissingNameInput() {
+    public void testMissingNameExceptionThrown() {
         Mortgage mort = new Mortgage();
         Faker fake = new Faker();
         Double loanAmount = fake.number().randomDouble(0, 1000, 10000);
         Double interest = fake.number().randomDouble(2, 1, 10);
         int years = fake.number().numberBetween(1, 30);
-        String statsOnly = loanAmount.toString() + "," + interest.toString() + "," + years;
+        String valuesOnly = loanAmount.toString() + "," + interest.toString() + "," + years;
         Exception e = assertThrows(IllegalArgumentException.class, () -> {
-            mort.outputProspect(statsOnly, 0);
+            mort.outputProspect(valuesOnly, 0);
         });
         String expected = "Method was called with empty string, not a valid argument";
         String actual = e.getMessage();
@@ -101,7 +101,7 @@ public class TestRunner {
     }
 
     @Test
-    public void testMissingStatsInput() {
+    public void testMissingvaluesExceptionThrown() {
         Mortgage mort = new Mortgage();
         Faker fake = new Faker();
         String name = fake.name().firstName();
