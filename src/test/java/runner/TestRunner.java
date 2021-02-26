@@ -12,6 +12,25 @@ import com.github.javafaker.*;
 
 public class TestRunner {
     
+
+    /**
+     * @brief Manually builds the string that the outputData function should produce.
+     * @param name The name of the customer.
+     * @param loan The loan amount.
+     * @param interest The yearly interest rate.
+     * @param years The amount of years the loan should be payed off.
+     * @param mortgage The montly rate it requires to pay off the loan in the amount of years supplied.
+     * @return The string which the outputData function should produce.
+     */
+    public String buildCorrectString(String name, Double loan, Double interest, int years, Double mortgage) {
+        String separator = "****************************************************************************************************\n\n";
+        String individual = "Prospect 0: " + name + " wants to borrow ";
+        String loanField = loan.toString() + "€ for a period of " + years + " years and pay ";
+        String mortgageField = String.format("%.2f",mortgage) + "€ each month\n";
+        String result = separator + individual + loanField + mortgageField + separator;
+        return result;
+    }
+
     @Test
     public void testMortgageCalcForPerson() {
         for(int i = 0; i < 1000; ++i) {
@@ -68,7 +87,7 @@ public class TestRunner {
     
     @Test
     public void testGetvaluesForDifferentNames() {
-        for (int i = 0; i < 500; ++i) {
+        for (int i = 0; i < 1000; ++i) {
             Mortgage mort = new Mortgage();
             Faker fake = new Faker();
             String fullName = fake.name().firstName() + " " + fake.name().lastName();
@@ -79,6 +98,29 @@ public class TestRunner {
             String[] list = {loanAmount.toString(), interest.toString(), Integer.toString(years)};
             String[] valuesList = mort.safeFormatValues(person);
             assertArrayEquals(list, valuesList);
+        }
+    }
+
+    @Test
+    public void testOutputCorrectData() {
+        for(int i=0; i < 1000; ++i) {
+            Mortgage mort = new Mortgage();
+            Faker fake = new Faker();
+            String fullName = fake.name().firstName() + " " + fake.name().lastName();
+            Double loanAmount = fake.number().randomDouble(0, 1000, 10000);
+            Double interest = fake.number().randomDouble(3,1,10);
+            int years = fake.number().numberBetween(1, 30);
+            String person = fullName + "," + loanAmount.toString() + "," + interest.toString() + "," + years;
+            Double mortgage = loanAmount * ((interest / 1200) / (1 - Math.pow(1+(interest/1200), -(years * 12))));
+            String expected = buildCorrectString(fullName, loanAmount, interest, years, mortgage);
+            String actual = mort.outputProspect(person, 0);
+            try {
+                assertEquals(actual, expected);
+            } catch (AssertionFailedError err) {
+                System.out.println("diff = " + StringUtils.difference(actual, expected));
+                System.out.println("Expected: " + actual + ", actual: " + expected);
+                fail();
+            }
         }
     }
 
@@ -99,7 +141,7 @@ public class TestRunner {
     }
 
     @Test
-    public void testMissingvaluesExceptionThrown() {
+    public void testMissingValuesExceptionThrown() {
         Mortgage mort = new Mortgage();
         Faker fake = new Faker();
         String name = fake.name().firstName();

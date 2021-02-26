@@ -80,11 +80,11 @@ public class Mortgage {
         if (name.length() == 0 || values.length < 3) {
            throw new IllegalArgumentException("Method was called with empty string, not a valid argument");
         }
-        String separator = "****************************************************************************************************\n";
+        String separator = "****************************************************************************************************\n\n";
         String individual = "Prospect " + prospectNum + ": " + name + " wants to borrow ";
         String loan = values[0] + "€ for a period of " + values[2] + " years and pay ";
         String mortgage = String.format("%.2f",calcMortgage(values)) + "€ each month\n";
-        String result = separator + "\n" + individual + loan + mortgage + separator;
+        String result = separator + individual + loan + mortgage + separator;
         return result;
     }
 
@@ -93,7 +93,7 @@ public class Mortgage {
      * @param filename The file we want to output the data of
      * @throws FileNotFoundException
      * 
-     * The line that explains the formatting of the prospects file is always assumed to be there.
+     * The line that explains the formatting of the prospects file is always assumed to be present.
      */
     public void outputData(File filename) throws FileNotFoundException {
         Scanner scan = new Scanner(filename);
@@ -114,7 +114,6 @@ public class Mortgage {
         File prospects = new File("material/prospects.txt");
         Mortgage mort = new Mortgage();
         mort.outputData(prospects);
-
     }
 
 }
