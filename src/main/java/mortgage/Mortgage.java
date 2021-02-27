@@ -3,13 +3,19 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-
+/**
+ * This is a class which supplies functions to calculate monthly mortgage payments.
+ * 
+ * @author Sebastian Grönlund
+ * 
+ */
 public class Mortgage {
 
     /**
-     * @brief Calculates a base to the power of an exponent
+     * Calculates a base to the power of an exponent
+     * 
      * @param base The factor which should be multiplied by itself
-     * @param exponent The amoun of times we multipliy the factor by itself
+     * @param exponent The amount of times we multipliy the factor by itself
      * @return The value of the base to the power of the exponent
      */
     public Double power(Double base, int exponent) {
@@ -21,37 +27,41 @@ public class Mortgage {
     }
 
     /** 
-     * @brief Takes a string and outputs the name of a customer.
+     * Takes a string and outputs the name of a customer.
+     * 
      * @param line A line within the prospect file.
      * @return The sequence of words which was found within the string.
+     * 
      * INVARIANT: Should never be used on empty string.
      */
 
     public String safeFormatName(String line) {
         String name = line.replaceAll("[^a-öA-Ö']+", " "); 
-        // Regex which matches one or more non alphabetic characters, i.e. if the user would have entered "John,,,,,,Johnsson" the replaceAll would return John Johnsson.
+        // Regex which matches one or more non alphabetic characters, i.e. if the user would have entered "John,,,,,,Johnsson" the replaceAll would return John Johnsson. Doesn't remove apostrophe since some last names may have it.
         name = name.trim(); //Removes trailing and leading whitespaces which may remain after using the replaceAll
         return name;
     }
 
     /**
-     *  @brief Tries to find the loan amount, interest rate and amount of years the customer want to pay back the loan in.
+     *  Tries to find the loan amount, interest rate and amount of years the customer want to pay back the loan in.
+     * 
      *  @param line A line within the prospect file
      *  @return An array of strings of the values which were in the string
      *  
-     *  Function is composed such that if we find a digit and a comma it is assumed that we've found the second part of the input,
-     *  i.e. the loan amount.
+     *  Assumes that the order specified in the prospects file is always true, possible to parse the first string in the text-file and
+     *  then determine which part of the string are eg. the loan amount etc.
      */
     public String[] safeFormatValues(String line) {
         String values = line.replaceAll("[^0-9.]+", " ");
-        // Regex which matches one ore more non-digit character (and zero for decimal values), works in a similiar way to the one in safeFormatName
+        // Regex which matches one ore more non-digit character (and dot for decimal values), works in a similiar way to the one in safeFormatName
         values = values.trim();
         String[] valueParts = values.split(" ");
         return valueParts;
     }
 
     /** 
-     * @brief Calculates the montly mortgage payment based on a array of string supplied by safeFormatValues.
+     * Calculates the montly mortgage payment based on a array of string supplied by safeFormatValues.
+     * 
      * @param values the result of calling safeFormatValues on a string in the prospects file.
      * @return The montly mortgage payment the customer will make.
      * 
@@ -59,7 +69,7 @@ public class Mortgage {
      */
     public Double calcMortgage(String[] values) {
         Double totalLoan = Double.parseDouble(values[0]);
-        Double interest = Double.parseDouble(values[1]) / 100; /*Need to divide by 100 otherwise interest is not in percentages*/
+        Double interest = Double.parseDouble(values[1]) / 100; /*Need to divide by 100 otherwise the interest rate is not in percentages*/
         int years = Integer.parseInt(values[2]);
         Double montlyInterest = interest / 12;
         int numOfPayments = years * 12;
@@ -68,7 +78,8 @@ public class Mortgage {
     } 
 
     /**
-     * @brief Takes the values from safeFormatValues, safeFormatName and calcMortgage and formats them into a nicer string.
+     * Takes the values from safeFormatValues, safeFormatName and calcMortgage and formats them into a nicer string.
+     * 
      * @param line a line within the prospect file
      * @param prospectNum the number of the current customer in the file.
      * @return An exact String is described in the instructions
@@ -89,16 +100,19 @@ public class Mortgage {
     }
 
     /**
-     * @brief Takes a file, which must be formatted as the prospects file, and outputs the data based on the people in it
+     * Takes a file, which must be formatted as the prospects file, and outputs the data based on the customer in it
+     * 
      * @param filename The file we want to output the data of
      * @throws FileNotFoundException
+     * 
      * 
      * The line that explains the formatting of the prospects file is always assumed to be present.
      */
     public void outputData(File filename) throws FileNotFoundException {
         Scanner scan = new Scanner(filename);
         int i = 1;
-        scan.nextLine(); //Skip over line which explains formatting of the file, i.e. if other files are used to test this program they also are assumed to include a similar line
+        scan.nextLine(); 
+        //Skip over line which explains formatting of the file, i.e. if other files are used to test this program they also are assumed to include a similar line. As stated in previous documentation one could parse this line and then determine how the next lines should be interpreted.
         while(scan.hasNextLine()) {
             String currentLine = scan.nextLine();
             if (currentLine.length() >= 7) { //This assumes that a valid string is eg. a,1,2,3

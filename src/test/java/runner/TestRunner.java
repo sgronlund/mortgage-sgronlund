@@ -14,12 +14,12 @@ public class TestRunner {
     
 
     /**
-     * @brief Manually builds the string that the outputData function should produce.
+     * Manually builds the string that the outputData function should produce.
      * @param name The name of the customer.
      * @param loan The loan amount.
      * @param interest The yearly interest rate.
      * @param years The amount of years the loan should be payed off.
-     * @param mortgage The montly rate it requires to pay off the loan in the amount of years supplied.
+     * @param mortgage The monthly rate it requires to pay off the loan in the amount of years supplied.
      * @return The string which the outputData function should produce.
      */
     public String buildCorrectString(String name, Double loan, Double interest, int years, Double mortgage) {
